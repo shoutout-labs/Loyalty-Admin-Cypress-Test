@@ -1,0 +1,25 @@
+name: Run Single Cypress Test
+
+on:
+  push:
+    branches:
+      - main  # Or 'master' or your branch name
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run single Cypress test
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
