@@ -3,7 +3,7 @@ name: Run Single Cypress Test
 on:
   push:
     branches:
-      - main  # Or 'master' or your branch name
+      - main
 
 jobs:
   cypress-run:
@@ -20,6 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Fix Cypress binary permissions
+        run: chmod +x node_modules/.bin/cypress
 
       - name: Run single Cypress test
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
