@@ -7,7 +7,7 @@ describe('Navigate to Card Sections', () => {
     cy.get('input[type="submit"]').click();
 
     cy.origin('https://admin.loyaltybeta.cxforge.com', () => {
-      // ✅ After login, force navigation to Card Pool
+    
       cy.visit('https://admin.loyaltybeta.cxforge.com/cards/pool');
 
       
