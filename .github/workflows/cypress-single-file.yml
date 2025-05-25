@@ -21,7 +21,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          spec: cypress/e2e/Full\ Navigation.cy.js
+      - name: Run single Cypress test
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
