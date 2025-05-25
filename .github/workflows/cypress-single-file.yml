@@ -26,7 +26,7 @@ jobs:
         run: rm -rf cypress/results
 
       - name: Run Cypress Tests
-        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/results,overwrite=false,html=false,json=true
 
       - name: Ensure mochawesome report exists
         run: |
