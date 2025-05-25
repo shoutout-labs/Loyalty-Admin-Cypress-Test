@@ -28,8 +28,15 @@ jobs:
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Debug - List Mochawesome JSON files
-        run: ls -lh cypress/results || echo "⚠️ No mochawesome JSON files found"
+      - name: List mochawesome JSON reports
+        run: ls -lh cypress/results/*.json || echo "No JSON reports found"
+
+      - name: Check JSON reports exist
+        run: |
+          if [ -z "$(ls -A cypress/results/*.json 2>/dev/null)" ]; then
+            echo "❌ No mochawesome JSON reports found, failing job."
+            exit 1
+          fi
 
       - name: Merge Mochawesome JSON reports
         run: |
