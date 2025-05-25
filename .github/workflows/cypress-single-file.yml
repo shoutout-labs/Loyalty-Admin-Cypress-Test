@@ -28,25 +28,20 @@ jobs:
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: List mochawesome JSON reports
-        run: ls -lh cypress/results/*.json || echo "No JSON reports found"
-
-      - name: Check JSON reports exist
+      - name: Ensure mochawesome report exists
         run: |
-          if [ -z "$(ls -A cypress/results/*.json 2>/dev/null)" ]; then
-            echo "❌ No mochawesome JSON reports found, failing job."
+          if [ -f cypress/results/mochawesome.json ]; then
+            echo "✅ Found mochawesome.json"
+          else
+            echo "❌ mochawesome.json not found. Failing the job."
             exit 1
           fi
 
-      - name: Merge Mochawesome JSON reports
+      - name: Generate HTML report
         run: |
-          mkdir -p cypress/results
-          npx mochawesome-merge cypress/results/*.json > cypress/results/merged-report.json
-
-      - name: Generate HTML Report
-        run: |
-          mkdir -p cypress/results/html
-          npx marge cypress/results/merged-report.json --reportDir cypress/results/html --reportFilename index.html
+          npx marge cypress/results/mochawesome.json \
+            --reportDir cypress/results/html \
+            --reportFilename index.html
 
       - name: Upload Mochawesome HTML Report
         uses: actions/upload-artifact@v4
