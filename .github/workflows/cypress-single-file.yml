@@ -22,20 +22,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Mocha JUnit Reporter
-        run: npm install --save-dev mocha-junit-reporter
-
       - name: Clean previous test results
         run: rm -rf cypress/results
 
-      - name: Run Cypress Tests with JUnit Reporter
+      - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Check if results exist
-        run: ls -R cypress/results || echo "No test results found."
+      - name: Merge Mochawesome JSON reports
+        run: |
+          npx mochawesome-merge cypress/results/*.json > cypress/results/merged-report.json
 
-      - name: Upload JUnit test results
+      - name: Generate HTML Report
+        run: |
+          npx marge cypress/results/merged-report.json --reportDir cypress/results --reportFilename index.html
+
+      - name: Upload Mochawesome HTML Report
         uses: actions/upload-artifact@v4
         with:
-          name: junit-test-results
+          name: mochawesome-html-report
           path: cypress/results
