@@ -22,11 +22,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Mocha JUnit Reporter
+        run: npm install --save-dev mocha-junit-reporter
+
       - name: Clean previous test results
         run: rm -rf cypress/results
 
-      - name: Run Full Navigation Loyalty
+      - name: Run Cypress Tests with JUnit Reporter
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
+
+      - name: Check if results exist
+        run: ls -R cypress/results || echo "No test results found."
 
       - name: Upload JUnit test results
         uses: actions/upload-artifact@v4
