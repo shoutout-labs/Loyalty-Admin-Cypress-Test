@@ -28,16 +28,21 @@ jobs:
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
+      - name: Debug - List Mochawesome JSON files
+        run: ls -lh cypress/results || echo "⚠️ No mochawesome JSON files found"
+
       - name: Merge Mochawesome JSON reports
         run: |
+          mkdir -p cypress/results
           npx mochawesome-merge cypress/results/*.json > cypress/results/merged-report.json
 
       - name: Generate HTML Report
         run: |
-          npx marge cypress/results/merged-report.json --reportDir cypress/results --reportFilename index.html
+          mkdir -p cypress/results/html
+          npx marge cypress/results/merged-report.json --reportDir cypress/results/html --reportFilename index.html
 
       - name: Upload Mochawesome HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
-          path: cypress/results
+          path: cypress/results/html
