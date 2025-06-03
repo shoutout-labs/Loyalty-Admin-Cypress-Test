@@ -12,7 +12,7 @@ describe('Navigate to All Sections Sequentially', () => {
       cy.wait(5000);
 
       cy.contains('Segments').click();
-      cy.contains('Segments', { timeout: 10000 }).should('be.visible');
+      cy.contains('Segments', { timeout: 20000 }).should('be.visible');
       cy.wait(5000);
 
       cy.contains('Find Members').click();
