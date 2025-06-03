@@ -26,25 +26,19 @@ jobs:
         run: rm -rf cypress/results
 
       - name: Run Cypress Tests
-        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/results,overwrite=false,html=false,json=true
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Ensure mochawesome report exists
+      - name: Ensure HTML report was generated
         run: |
-          if [ -f cypress/results/mochawesome.json ]; then
-            echo "✅ Found mochawesome.json"
+          if [ -f cypress/results/mochawesome.html ]; then
+            echo "✅ mochawesome.html report found"
           else
-            echo "❌ mochawesome.json not found. Failing the job."
+            echo "❌ mochawesome.html not found. Failing the job."
             exit 1
           fi
-
-      - name: Generate HTML report
-        run: |
-          npx marge cypress/results/mochawesome.json \
-            --reportDir cypress/results/html \
-            --reportFilename index.html
 
       - name: Upload Mochawesome HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
-          path: cypress/results/html
+          path: cypress/results/mochawesome.html
