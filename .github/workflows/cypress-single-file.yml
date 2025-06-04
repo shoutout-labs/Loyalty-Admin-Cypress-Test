@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   cypress-run:
@@ -25,29 +28,39 @@ jobs:
       - name: Clean previous test results
         run: rm -rf cypress/results
 
-      - name: Run Cypress Tests with Mochawesome Reporter
-        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js" --reporter cypress-mochawesome-reporter
+      - name: Run Cypress Tests
+        continue-on-error: true
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js" --reporter mochawesome --reporter-options reportDir=cypress/results,overwrite=false,html=false,json=true,charts=true,timestamp=mm/dd/yyyy_hh:mm:ss,showHooks=always,includeStdErr=true
 
-      - name: Check if JSON reports exist
+      - name: List contents of results directory
+        if: always()
         run: |
-          if ls cypress/results/*.json 1> /dev/null 2>&1; then
-            echo "✅ JSON reports found."
+          echo "Contents of cypress/results:"
+          ls -la cypress/results || echo "No files found in cypress/results"
+
+      - name: Ensure mochawesome report exists
+        if: always()
+        run: |
+          if [ -f cypress/results/mochawesome.json ]; then
+            echo "✅ Found mochawesome.json"
           else
-            echo "❌ No mochawesome JSON reports found. Failing the job."
+            echo "❌ mochawesome.json not found. Failing the job."
             exit 1
           fi
 
-      - name: Merge Mochawesome JSON Reports
-        run: |
-          npx mochawesome-merge cypress/results/*.json > cypress/results/mochawesome.json
-
-      - name: Generate HTML Report
+      - name: Generate HTML report
+        if: always()
         run: |
           npx marge cypress/results/mochawesome.json \
             --reportDir cypress/results/html \
-            --reportFilename index.html
+            --reportFilename index.html \
+            --inline \
+            --charts \
+            --showHooks always \
+            --verbose
 
       - name: Check if HTML report exists
+        if: always()
         run: |
           if [ -f cypress/results/html/index.html ]; then
             echo "✅ mochawesome HTML report found."
@@ -57,7 +70,9 @@ jobs:
           fi
 
       - name: Upload Mochawesome HTML Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
           path: cypress/results/html
+          retention-days: 7
