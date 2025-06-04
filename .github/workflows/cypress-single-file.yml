@@ -25,34 +25,34 @@ jobs:
       - name: Clean previous test results
         run: rm -rf cypress/results
 
-      - name: Run Cypress Tests
-        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
+      - name: Run Cypress Tests with Mochawesome Reporter
+        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js" --reporter cypress-mochawesome-reporter
 
-      - name: Ensure mochawesome JSON report(s) exist
+      - name: Check if JSON reports exist
         run: |
           if ls cypress/results/*.json 1> /dev/null 2>&1; then
-            echo "✅ Found mochawesome JSON report(s)"
+            echo "✅ JSON reports found."
           else
             echo "❌ No mochawesome JSON reports found. Failing the job."
             exit 1
           fi
 
-      - name: Merge mochawesome JSON reports
+      - name: Merge Mochawesome JSON Reports
         run: |
           npx mochawesome-merge cypress/results/*.json > cypress/results/mochawesome.json
 
-      - name: Generate HTML report
+      - name: Generate HTML Report
         run: |
           npx marge cypress/results/mochawesome.json \
             --reportDir cypress/results/html \
-            --reportFilename mochawesome.html
+            --reportFilename index.html
 
-      - name: Ensure mochawesome.html report exists
+      - name: Check if HTML report exists
         run: |
-          if [ -f cypress/results/html/mochawesome.html ]; then
-            echo "✅ mochawesome.html report found"
+          if [ -f cypress/results/html/index.html ]; then
+            echo "✅ mochawesome HTML report found."
           else
-            echo "❌ mochawesome.html not found. Failing the job."
+            echo "❌ mochawesome HTML report not found. Failing the job."
             exit 1
           fi
 
@@ -60,4 +60,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
-          path: cypress/results/html/mochawesome.html
+          path: cypress/results/html
