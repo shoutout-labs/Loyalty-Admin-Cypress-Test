@@ -15,9 +15,31 @@ describe('Find Tiers', () => {
       cy.visit('https://admin.loyaltybeta.cxforge.com/fraudulence/fraud');
 
       cy.contains('Fraud Prevention', { timeout: 10000 }).should('be.visible');
+      cy.wait(5000);
 
-    cy.wait(5000);
-    cy.contains('Fri May 02').click();
+      cy.contains('Fraud Incidents').click();
+      cy.contains('Fraud Incidents').should('be.visible');
+      cy.wait(5000);
+
+      cy.contains('Resolved').click();
+      cy.contains('Resolved').should('be.visible');
+      cy.wait(5000);
+
+      cy.contains('Pending').click();
+      cy.contains('Pending').should('be.visible');
+      cy.wait(5000);
+
+      cy.contains('Auto Suspended Members').click();
+      cy.contains('Auto Suspended Members').should('be.visible');
+      cy.wait(5000);
+
+      cy.contains('Fraud Rules').click();
+      cy.contains('Fraud Rules').should('be.visible');
+      cy.wait(5000);
+
+
+
+
 
     })
 

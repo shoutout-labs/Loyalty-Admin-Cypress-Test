@@ -28,9 +28,16 @@ jobs:
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Ensure HTML report was generated
+      - name: Merge mochawesome reports
         run: |
-          if [ -f cypress/results/mochawesome.html ]; then
+          npx mochawesome-merge cypress/results/*.json > cypress/results/mochawesome.json
+          npx marge cypress/results/mochawesome.json \
+            --reportDir cypress/results/html \
+            --reportFilename mochawesome.html
+
+      - name: Ensure mochawesome report exists
+        run: |
+          if [ -f cypress/results/html/mochawesome.html ]; then
             echo "✅ mochawesome.html report found"
           else
             echo "❌ mochawesome.html not found. Failing the job."
@@ -41,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
-          path: cypress/results/mochawesome.html
+          path: cypress/results/html/mochawesome.html
