@@ -28,14 +28,26 @@ jobs:
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Merge mochawesome reports
+      - name: Ensure mochawesome JSON report(s) exist
+        run: |
+          if ls cypress/results/*.json 1> /dev/null 2>&1; then
+            echo "✅ Found mochawesome JSON report(s)"
+          else
+            echo "❌ No mochawesome JSON reports found. Failing the job."
+            exit 1
+          fi
+
+      - name: Merge mochawesome JSON reports
         run: |
           npx mochawesome-merge cypress/results/*.json > cypress/results/mochawesome.json
+
+      - name: Generate HTML report
+        run: |
           npx marge cypress/results/mochawesome.json \
             --reportDir cypress/results/html \
             --reportFilename mochawesome.html
 
-      - name: Ensure mochawesome report exists
+      - name: Ensure mochawesome.html report exists
         run: |
           if [ -f cypress/results/html/mochawesome.html ]; then
             echo "✅ mochawesome.html report found"
