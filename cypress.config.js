@@ -1,9 +1,8 @@
-
 const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'https://admin.uat.loyaltybeta.cxforge.com',
+    baseUrl: 'https://admin.loyaltybeta.cxforge.com',
     experimentalSessionAndOrigin: true,
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
@@ -14,17 +13,22 @@ module.exports = defineConfig({
     reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',
-      overwrite: true,
-      html: true,                 
-      json: true,
+      overwrite: false, // Prevent overwriting reports
+      html: true,
+      json: true, // Ensure JSON files are generated
+      saveJson: true, // Explicitly save JSON reports
       charts: true,
       reportPageTitle: 'Cypress Report',
       embeddedScreenshots: true,
-      inlineAssets: true
+      inlineAssets: true,
+      showHooks: 'always',
+      includeStdErr: true,
+      timestamp: 'mm/dd/yyyy, hh:mm:ss TT',
+      quiet: false
     },
 
     setupNodeEvents(on, config) {
-      require('cypress-mochawesome-reporter/plugin')(on); 
+      require('cypress-mochawesome-reporter/plugin')(on);
       return config;
     },
   },
