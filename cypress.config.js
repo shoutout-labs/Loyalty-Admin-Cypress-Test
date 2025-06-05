@@ -1,4 +1,5 @@
 const { defineConfig } = require('cypress');
+const installLogsPrinter = require('cypress-terminal-report').install;
 
 module.exports = defineConfig({
   e2e: {
@@ -12,11 +13,13 @@ module.exports = defineConfig({
     reporter: 'mochawesome',
     reporterOptions: {
       reportDir: 'cypress/results',
-      overwrite: true, // ensures each test run replaces the last
+      overwrite: true,
       html: false,
       json: true
     },
     setupNodeEvents(on, config) {
+      // 👉 This adds log support
+      installLogsPrinter(on);
       return config;
     },
   },
