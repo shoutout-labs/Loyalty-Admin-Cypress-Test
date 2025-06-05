@@ -1,4 +1,6 @@
 const { defineConfig } = require('cypress');
+const mochawesome = require('cypress-mochawesome-reporter/plugin');
+const installLogsPrinter = require('cypress-terminal-report/src/installLogsPrinter');
 
 module.exports = defineConfig({
   e2e: {
@@ -7,17 +9,17 @@ module.exports = defineConfig({
     defaultCommandTimeout: 10000,
     pageLoadTimeout: 60000,
     video: false,
-    screenshotOnRunFailure: true,
     reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',
-      overwrite: true,
-      html: true,
-      json: true
+      overwrite: false,
+      html: false,
+      json: true,
     },
     setupNodeEvents(on, config) {
-      require('cypress-mochawesome-reporter/plugin')(on);
-      require('cypress-terminal-report/src/installLogsPrinter')(on); // ✅ correct usage
+      // 👇 add both plugins
+      mochawesome(on);
+      installLogsPrinter(on);
       return config;
     },
   },

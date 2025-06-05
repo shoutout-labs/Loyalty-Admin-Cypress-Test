@@ -22,16 +22,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Clean previous test results
-        run: rm -rf cypress/results
-
       - name: Run Cypress Tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
+      - name: Merge mochawesome JSON reports
+        run: |
+          npx mochawesome-merge cypress/results/*.json > cypress/results/merged.json
+
+      - name: Generate mochawesome HTML report
+        run: |
+          npx marge cypress/results/merged.json \
+            --reportDir cypress/results/html \
+            --reportFilename mochawesome.html
+
       - name: Ensure mochawesome HTML report exists
         run: |
-          if [ -f cypress/results/mochawesome.html ]; then
-            echo "✅ Found mochawesome.html"
+          if [ -f cypress/results/html/mochawesome.html ]; then
+            echo "✅ mochawesome.html found."
           else
             echo "❌ mochawesome.html not found. Failing the job."
             exit 1
@@ -41,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
-          path: cypress/results/mochawesome.html
+          path: cypress/results/html
