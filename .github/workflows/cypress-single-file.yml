@@ -7,7 +7,7 @@ on:
 
 jobs:
   cypress-run:
-    name: Run Full Navigation Test
+    name: Run Cypress and Generate HTML Report
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +22,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Cypress Tests
+      - name: Clean previous test results
+        run: rm -rf cypress/results
+
+      - name: Run Cypress tests
         run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
 
-      - name: Merge mochawesome JSON reports
+      - name: Ensure mochawesome JSON exists
+        run: |
+          if ls cypress/results/*.json 1> /dev/null 2>&1; then
+            echo "✅ JSON files found"
+          else
+            echo "❌ No mochawesome JSON files found"
+            exit 1
+          fi
+
+      - name: Validate mochawesome JSON files
+        run: |
+          for file in cypress/results/*.json; do
+            if ! jq empty "$file"; then
+              echo "❌ Invalid JSON in $file"
+              cat "$file"
+              exit 1
+            fi
+          done
+
+      - name: Merge mochawesome JSON files
         run: |
           npx mochawesome-merge cypress/results/*.json > cypress/results/merged.json
 
@@ -33,18 +55,9 @@ jobs:
         run: |
           npx marge cypress/results/merged.json \
             --reportDir cypress/results/html \
-            --reportFilename mochawesome.html
+            --reportFilename index.html
 
-      - name: Ensure mochawesome HTML report exists
-        run: |
-          if [ -f cypress/results/html/mochawesome.html ]; then
-            echo "✅ mochawesome.html found."
-          else
-            echo "❌ mochawesome.html not found. Failing the job."
-            exit 1
-          fi
-
-      - name: Upload Mochawesome HTML Report
+      - name: Upload mochawesome HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: mochawesome-html-report
