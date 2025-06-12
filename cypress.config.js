@@ -1,25 +1,28 @@
 const { defineConfig } = require('cypress');
 const mochawesome = require('cypress-mochawesome-reporter/plugin');
-const installLogsPrinter = require('cypress-terminal-report/src/installLogsPrinter');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'https://admin.loyaltybeta.cxforge.com',
+    baseUrl: 'https://admin.loyaltybeta.cxforge.com', 
+    experimentalSessionAndOrigin: true,
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
     pageLoadTimeout: 60000,
     video: false,
+    screenshotOnRunFailure: true,
+
     reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',
-      overwrite: false,
-      html: false,
+      overwrite: true, 
+      html: true,       //Generate a readable HTML report
       json: true,
+      embeddedScreenshots: true, 
+      inlineAssets: true         
     },
+
     setupNodeEvents(on, config) {
-      // 👇 add both plugins
       mochawesome(on);
-      installLogsPrinter(on);
       return config;
     },
   },
