@@ -25,8 +25,12 @@ jobs:
       - name: Clean previous test results
         run: rm -rf cypress/results
 
-      - name: Run Cypress tests
-        run: npx cypress run --spec "cypress/e2e/Full Navigation.cy.js"
+      - name: Run Cypress tests with Mochawesome
+        run: |
+          npx cypress run \
+            --spec "cypress/e2e/Full Navigation.cy.js" \
+            --reporter cypress-mochawesome-reporter \
+            --reporter-options reportDir=cypress/results,overwrite=false,html=false,json=true
 
       - name: Ensure mochawesome JSON exists
         run: |
@@ -37,21 +41,11 @@ jobs:
             exit 1
           fi
 
-      - name: Validate mochawesome JSON files
-        run: |
-          for file in cypress/results/*.json; do
-            if ! jq empty "$file"; then
-              echo "❌ Invalid JSON in $file"
-              cat "$file"
-              exit 1
-            fi
-          done
-
-      - name: Merge mochawesome JSON files
+      - name: Merge mochawesome JSON reports
         run: |
           npx mochawesome-merge cypress/results/*.json > cypress/results/merged.json
 
-      - name: Generate mochawesome HTML report
+      - name: Generate HTML report from merged JSON
         run: |
           npx marge cypress/results/merged.json \
             --reportDir cypress/results/html \
