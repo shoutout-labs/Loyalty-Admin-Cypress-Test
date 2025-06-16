@@ -3,7 +3,7 @@ const mochawesome = require('cypress-mochawesome-reporter/plugin');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'https://admin.loyaltybeta.cxforge.com', 
+    baseUrl: 'https://admin.loyaltybeta.cxforge.com',
     experimentalSessionAndOrigin: true,
     chromeWebSecurity: false,
     defaultCommandTimeout: 10000,
@@ -14,11 +14,11 @@ module.exports = defineConfig({
     reporter: 'cypress-mochawesome-reporter',
     reporterOptions: {
       reportDir: 'cypress/results',
-      overwrite: true, 
-      html: true,       //Generate a readable HTML report
+      overwrite: true,
+      html: true,
       json: true,
-      embeddedScreenshots: true, 
-      inlineAssets: true         
+      embeddedScreenshots: true,
+      inlineAssets: true
     },
 
     setupNodeEvents(on, config) {
